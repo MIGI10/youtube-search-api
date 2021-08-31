@@ -3,7 +3,7 @@ const youtubeEndpoint=`https://www.youtube.com`;
 
 let GetYoutubeInitData=async(url)=>{
     return new Promise((resolve,reject)=>{
-        axios.get(encodeURI(url)).then(page => {
+        axios.get(url).then(page => {
             const data = page.data.split('var ytInitialData =')[1]
                 .split("</script>")[0]
                 .slice(0, -1);
@@ -26,7 +26,9 @@ let GetYoutubeInitData=async(url)=>{
 };
 
 let GetData=async (keyword,withPlaylist=false)=>{
-    let endpoint=`${youtubeEndpoint}/results?search_query=${keyword}`;
+    let encodedKeyword=encodeURIComponent(keyword);
+    encodedKeyword=encodedKeyword.replaceAll('%20', '+')
+    let endpoint=`${youtubeEndpoint}/results?search_query=${encodedKeyword}`;
     return new Promise((resolve, reject)=>{
         GetYoutubeInitData(endpoint).then(async page=>{
             const sectionListRenderer =await page.initdata.contents
